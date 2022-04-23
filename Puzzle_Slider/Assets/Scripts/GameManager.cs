@@ -7,9 +7,13 @@ using TMPro;
 public class GameManager : MonoBehaviour
 {
     public TMP_Text movesMade;
-    public GameObject winBanner;
-    public GameObject loadNextLevel;
-    public GameObject restartLevel;
+    public TMP_Text endMovesText;
+
+    public GameObject player;
+
+    public GameObject winPanel;
+    public GameObject empty_star1;
+    public GameObject empty_star2;
 
     public int currentMoves = 0;
     public int threeStarMoves = 0;
@@ -24,21 +28,92 @@ public class GameManager : MonoBehaviour
     private void Awake()
     {
         Instance = this;
+    } // End method.
+
+    void Start()
+    {
+        UpdateGameState(GameState.Playing);
+    } // End method.
+
+    public void UpdateGameState(GameState newState)
+    {
+        switch (newState)
+        {
+            case GameState.Playing:
+                gameState = newState;
+                HandlePlayingGame();
+                break;
+            case GameState.WinLevel:
+                gameState = newState;
+                HandlePlayingGame();
+                break;
+        } // End switch.
+
+        OnGameStateChanged?.Invoke(newState);
+
+    } // End method.
+
+    private void HandlePlayingGame()
+    {
+        if (player.activeSelf == false)
+        {
+            UpdateGameState(GameState.WinLevel);
+        } // End if.
+    } // End method.
+
+    private void HandleWinLevel()
+    {
+        winPanel.SetActive(true);
+
+        if (currentMoves <= threeStarMoves)
+        {
+
+        } // End if.
+
+        if (currentMoves > threeStarMoves && currentMoves <= twoStarMoves)
+        {
+
+        } // End if.
+
+        if (currentMoves > twoStarMoves)
+        {
+
+        } // End if.
+    } // End method.
+
+    void Update()
+    {
+        if (player.activeSelf == false)
+        {
+            winPanel.SetActive(true);
+
+            if (currentMoves > threeStarMoves && currentMoves <= twoStarMoves)
+            {
+                empty_star2.SetActive(true);
+            } // End if.
+
+            if (currentMoves > twoStarMoves)
+            {
+                empty_star1.SetActive(true);
+                empty_star2.SetActive(true);
+            } // End if.
+        }
     }
 
     private void FixedUpdate()
     {
-        movesMade.SetText("Moves:" + " \n" 
-                         + currentMoves + "\n" 
-                         + "Record:" + "\n"
-                         + "--");
-    }
+        movesMade.SetText("Current" + "\n" +
+                          "Moves:" + "\n" +
+                          currentMoves);
+
+        endMovesText.SetText("Moves: " + currentMoves);
+
+    } // End method.
 
     public enum GameState
     {
-        Idle,
         Playing,
         WinLevel
-    }
+    } // End enum.
 
 }
